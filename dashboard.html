@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرئيسية - ELITE Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- تحديث تلقائي كل 5 ثواني -->
+    <meta http-equiv="refresh" content="5">
+</head>
+<body>
+    <div class="navbar">
+        <h1>🛡️ ELITE PRO — لوحة التحكم</h1>
+        <a href="/logout" class="btn" style="width: auto; background: var(--danger); padding: 8px 15px; text-decoration: none;">تسجيل خروج</a>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>👥 المستخدمون</h3>
+                <div class="number">{{ stats.users }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>📚 الدروس</h3>
+                <div class="number">{{ stats.lessons }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>📝 الأسئلة</h3>
+                <div class="number">{{ stats.questions }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>🎫 تذاكر مفتوحة</h3>
+                <div class="number">{{ stats.tickets }}</div>
+            </div>
+        </div>
+
+        <div class="activity-panel">
+            <h2>📡 سجل الأحداث (مباشر)</h2>
+            <ul class="activity-list">
+                {% for act in activity %}
+                <li>
+                    <span>
+                        {% if act.action == 'user_activity' %}💬 رسالة جديدة من 
+                        {% elif act.action == 'admin_panel_unlocked' %}🔓 فتح لوحة الإدارة 
+                        {% elif act.action == 'broadcast_completed' %}📣 إرسال بث 
+                        {% elif act.action == 'study_lesson_deleted' %}🗑️ حذف درس 
+                        {% else %}⚙️ {{ act.action }} {% endif %}
+                        (ID: {{ act.actor_id }})
+                    </span>
+                    <span class="time">{{ act.created_at[:16].replace('T', ' ') }}</span>
+                </li>
+                {% else %}
+                <li>لا يوجد نشاط حتى الآن.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
